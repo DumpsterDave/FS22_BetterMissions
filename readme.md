@@ -1,4 +1,4 @@
-##Better Missions for FS22
+## Better Missions for FS22
 
 This mod updates the reward tables for mission to pay out at $10,000/hr based one field size and equipment used.  The mod uses the borrowed equipment table to calculate how long it will take to complete the field with the given equipment and then adjusts the payment structure accordingly.  
 
