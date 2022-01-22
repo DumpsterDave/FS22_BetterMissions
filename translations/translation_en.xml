@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>DumpsterDave</translationContributors>
+    <texts>
+        <text name="BM_fieldJob_desc_harvesting" text="Harvest %d liters of &apos;%s&apos; from field %d and take the product to %s." />
+    </texts>
+</l10n>
