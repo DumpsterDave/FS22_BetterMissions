@@ -2,6 +2,23 @@
 <l10n>
     <translationContributors>DumpsterDave</translationContributors>
     <texts>
-        <text name="BM_fieldJob_desc_harvesting" text="Harvest %d liters of &apos;%s&apos; from field %d and take the product to %s." />
+        <text name="BM_fieldJob_desc_harvesting" text="Harvest %d liters of &apos;%s&apos; from field %d and take the product to %s.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_spraying" text="Remove the weeds in field %d by spraying the field with herbicide.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_baling_hay" text="Mow the grass in field %d. Then dry it with a tedder and bale it. Take the bales to %s.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_baling_silage" text="Mow the grass in field %d. Then bale the grass and wrap it to make silage bales. Take the bales to %s.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_cultivating" text="Prepare field %d for sowing the next crop by cultivating it.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_fertilizing" text="Fertilize field %d with any type of fertilizer (liquid, solid, slurry, or manure).
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_plowing" text="Plow field %d to loosen the soil and prepare it for sowing the next crop.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_sowing" text="Sow field %d with &apos;%s&apos;.
+        Expected Field Time: %s" />
+        <text name="BM_fieldJob_desc_weeding" text="Remove the small weeds in field %d using a weeder.
+        Expected Field Time: %s" />
     </texts>
 </l10n>
