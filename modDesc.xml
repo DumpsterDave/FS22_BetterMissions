@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author>DumpsterDave - defcon1gaming.com</author>
-    <version>0.9.0.0</version>
+    <version>0.9.0.8</version>
     <iconFilename>icon.dds</iconFilename>
     <title>
         <en>Better Missions by DEFCON 1 Gaming.com</en>
@@ -19,3 +19,6 @@
     <multiplayer supported="true"/>
     
 </modDesc>
+
+
+

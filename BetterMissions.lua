@@ -20,6 +20,7 @@ BetterMissions = {
 		WEEDERS = "WEED",
 		FERTILIZERSPREADERS = "FERTILIZE",
 		SPRAYERS = "SPRAY",
+		SPRAYERVEHICLES = "SPRAY",
 		CULTIVATORS = "TILL",
 		MOWERS = "MOW",
 		TEDDERS = "TED",
@@ -37,7 +38,8 @@ BetterMissions = {
 		SUGARCANE = 1428,
 		SPRAY = 0.0081,
 		FERTILIZE = 0.0060
-	}
+	},
+	STARTUP_MODE = 1
 }
 local BetterMissions_mt = Class(BetterMissions)
 addModEventListener(BetterMissions)
@@ -46,8 +48,13 @@ function BetterMissions:loadMap()
 	BetterMissions.info("Loading Better Missions v" .. BetterMissions.VERSION)
 	if fileExists(BetterMissions.MOD_SETTINGS .. "/BetterMissionsDebugMode") then
 		BetterMissions.DEBUG_MODE = true
+		BetterMissions.STARTUP_MODE = 2
 	end
+		
+
+	
 	--Overwrite Description Functions
+	
     HarvestMission.getData = Utils.overwrittenFunction(HarvestMission.getData, BetterMissions.getHarvestMissionData)
 	SprayMission.getData = Utils.overwrittenFunction(SprayMission.getData, BetterMissions.getSprayMissionData)
 	BaleMission.getData = Utils.overwrittenFunction(BaleMission.getData, BetterMissions.getBaleMissionData)
@@ -56,9 +63,22 @@ function BetterMissions:loadMap()
 	PlowMission.getData = Utils.overwrittenFunction(PlowMission.getData, BetterMissions.getPlowMissionData)
 	SowMission.getData = Utils.overwrittenFunction(SowMission.getData, BetterMissions.getSowMissionData)
 	WeedMission.getData = Utils.overwrittenFunction(WeedMission.getData, BetterMissions.getWeedMissionData)
+	if g_currentMission:getIsServer() then
+		g_messageCenter:subscribe(MessageType.MISSION_GENERATED, BetterMissions.updateMissionRewards, BetterMissions)
+		BetterMissions.DEBUG_MODE = true
+		BetterMissions.STARTUP_MODE = 2
+	end
+	addConsoleCommand("bmToggleDebug", "Toggle debug mode for Better Missions", "consoleToggleDebug", self)
+	--g_missionManager.MISSION_GENERATION_INTERVAL = 600000
+end
 
-	g_messageCenter:subscribe(MessageType.MISSION_GENERATED, BetterMissions.updateMissionRewards, BetterMissions)
-	g_missionManager.MISSION_GENERATION_INTERVAL = 600000
+function BetterMissions:consoleToggleDebug()
+	if BetterMissions.DEBUG_MODE == false then
+		BetterMissions.DEBUG_MODE = true
+	else
+		BetterMissions.DEBUG_MODE = false
+	end
+	BetterMissions.info("Debug mode set to " .. tostring(BetterMissions.DEBUG_MODE))
 end
 
 function BetterMissions.getMissionSteps(mission)
@@ -77,13 +97,11 @@ function BetterMissions.getMissionSteps(mission)
 				width = tonumber(Utils.getNoNil(storeItem.specs.workingWidth, 0))
 			}
 			if step.width == 0 then
-				if storeItem.name == "K105" then
+				if storeItem.name == "K105" or storeItem.name == "K165" then
 					step.width = 12
 				elseif storeItem.name == "Ventor 4150" then
 					step.width = 3.3
-				elseif storeItem.name == "COMMANDER 4500 DELTA FORCE" then
-					step.width = 27
-				elseif storeItem.name == "AEON 5200 DELTA FORCE" then
+				elseif storeItem.name == "COMMANDER 4500 DELTA FORCE" or storeItem.name == "AEON 5200 DELTA FORCE"  then
 					step.width = 27
 				else
 					BetterMissions.warning(storeItem.name .. " has a width of 0")
@@ -212,13 +230,14 @@ function BetterMissions.calculateNewRewards(mission)
 	
 
 	--Update Mission Rewards
-	
-	local newReward = fruitMultiplier * mission.newBaseReward + mission.reimbursementPerHa * mission.field.fieldArea
 	local displayReward = mission.rewardPerHa * mission.field.fieldArea * (1.3 - 0.1 * g_currentMission.missionInfo.economicDifficulty) + mission.reimbursementPerHa * mission.field.fieldArea * (1.4 - 0.1 * g_currentMission.missionInfo.economicDifficulty)
-	local newDisplayReward = mission.newRewardPerHa * mission.field.fieldArea * (1.3 - 0.1 * g_currentMission.missionInfo.economicDifficulty) + mission.newReimbursementPerHa * mission.field.fieldArea * (1.4 - 0.1 * g_currentMission.missionInfo.economicDifficulty)
-	mission.reimbursementPerHa = mission.newReimbursementPerHa
 	mission.rewardPerHa = mission.newRewardPerHa
+	mission.reimbursementPerHa = mission.newReimbursementPerHa
+	local newReward = fruitMultiplier * mission.rewardPerHa * mission.field.fieldArea + mission.reimbursementPerHa * mission.field.fieldArea
 	mission.reward = newReward
+	local newDisplayReward = mission.rewardPerHa * mission.field.fieldArea * (1.3 - 0.1 * g_currentMission.missionInfo.economicDifficulty) + mission.reimbursementPerHa * mission.field.fieldArea * (1.4 - 0.1 * g_currentMission.missionInfo.economicDifficulty)
+	mission.origDisplayReward = displayReward
+	mission.newDisplayReward = newDisplayReward
 	mission.BetterMissions = true
 end
 
@@ -231,27 +250,50 @@ function BetterMissions.formatFieldTime(hours)
 end
 
 function BetterMissions:updateMissionRewards()
-	BetterMissions.debug("Missions Generated. Processing new missions.")
+	if BetterMissions.STARTUP_MODE == 1 then
+		--Enable Debug Mode for first run
+		BetterMissions.DEBUG_MODE = true
+	end
+	BetterMissions.debug("Processing missions")
 	for _,mission in pairs(g_missionManager.missions) do
 		local stillValid = g_missionManager:canMissionStillRun(mission)
 		if (stillValid) then
 			if mission.BetterMissions == nil or mission.BetterMissions == false then
 				BetterMissions.getMissionSteps(mission)
 				BetterMissions.calculateNewRewards(mission)
-				BetterMissions.debug("Calculated info for field " .. mission.field.fieldId .. ": Time = " .. BetterMissions.formatFieldTime(mission.expectedFieldTime) .. " (" .. mission.expectedFieldTime .. "), HaPerHour = " .. mission.haPerHour .. ", New Base Reward = " .. mission.newBaseReward .. ", New REWARD_PER_HOUR = " .. mission.newRewardPerHa .. ", New reimbursementPerHa = " .. mission.reimbursementPerHa)
-				BetterMissions.debug("Original Data: rewardPerHa = " .. mission.origRewardPerHa .. ", reward = " .. mission.origReward .. ", reimbursementPerHa = " .. mission.origReimbursementPerHa .. ", fieldArea = " .. mission.field.fieldArea)
+				local fieldInfo = string.format([[Field Updated:
+				Field Number:           %d
+				Expected Time:          %s (%.3f)
+				RewardPerHa:            $%d -> $%d
+				BaseReward:             $%d -> $%d
+				ReimbursementPerHa:     $%d -> $%d
+				AdjustedReward:         $%d -> $%d]], mission.field.fieldId, BetterMissions.formatFieldTime(mission.expectedFieldTime), mission.expectedFieldTime, mission.origRewardPerHa, mission.newRewardPerHa, mission.origReward, mission.newBaseReward, mission.origReimbursementPerHa, mission.newReimbursementPerHa, mission.origDisplayReward, mission.newDisplayReward)
+				BetterMissions.debug(fieldInfo)
 			else
 				BetterMissions.debug(string.format("Skipping %s mission for field %02d. It has already been updated.", string.upper(mission.type.name), mission.field.fieldId))
 			end
 		else
-			BetterMissions.debug(string.format("%s mission for field %02d is no longer valid.  It will be deleted.", string.upper(mission.type.name), mission.field.fieldId))
+			BetterMissions.debug(string.format("%s mission for field %02d is no longer valid.", string.upper(mission.type.name), mission.field.fieldId))
 			mission.BetterMissions = false
-			mission:delete()
 		end
+	end
+	if BetterMissions.STARTUP_MODE == 1 then
+		BetterMissions.STARTUP_MODE = 0
+		BetterMissions.DEBUG_MODE = false
+	end
+end
+
+function BetterMissions:getMissionReward(mission)
+	if mission.BetterMissions == nil or mission.BetterMissions == false then
+		BetterMissions.debug("Fetching Mission Info for field " .. mission.field.fieldId)
+		BetterMissions.getMissionSteps(mission)
+		BetterMissions.calculateNewRewards(mission)
+		BetterMissions.debug(string.format("Mission for field %d updated: $%d --> $%d", mission.field.fieldId, mission.origDisplayReward, mission.newDisplayReward))
 	end
 end
 
 function BetterMissions:getWeedMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_weeding"),
@@ -261,7 +303,7 @@ function BetterMissions:getWeedMissionData()
 end
 
 function BetterMissions:getHarvestMissionData()
-	--BetterMissions.info("[BM] - Getting Harvest Mission Data")
+	BetterMissions:getMissionReward(self)
     if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -281,6 +323,7 @@ function BetterMissions:getHarvestMissionData()
 end
 
 function BetterMissions:getSprayMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_spraying"),
@@ -291,6 +334,7 @@ function BetterMissions:getSprayMissionData()
 end
 
 function BetterMissions:getBaleMissionData()
+	BetterMissions:getMissionReward(self)
 	if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -312,6 +356,7 @@ function BetterMissions:getBaleMissionData()
 end
 
 function BetterMissions:getCultivateMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_cultivating"),
@@ -321,6 +366,7 @@ function BetterMissions:getCultivateMissionData()
 end
 
 function BetterMissions:getFertilizeMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_fertilizing"),
@@ -331,6 +377,7 @@ function BetterMissions:getFertilizeMissionData()
 end
 
 function BetterMissions:getPlowMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_plowing"),
@@ -340,6 +387,7 @@ function BetterMissions:getPlowMissionData()
 end
 
 function BetterMissions:getSowMissionData()
+	BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_sowing"),
