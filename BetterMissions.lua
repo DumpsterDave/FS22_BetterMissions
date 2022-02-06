@@ -303,6 +303,7 @@ function BetterMissions:getWeedMissionData()
 end
 
 function BetterMissions:getHarvestMissionData()
+	BetterMissions.debug("Showing info for field " .. self.field.fieldId)
 	BetterMissions:getMissionReward(self)
     if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
@@ -318,7 +319,7 @@ function BetterMissions:getHarvestMissionData()
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_harvesting"),
 		action = g_i18n:getText("fieldJob_desc_action_harvesting"),
-		description = string.format(g_i18n:getText("BM_fieldJob_desc_harvesting"),self.expectedLiters, g_fillTypeManager:getFillTypeByIndex(self.fillType).title, self.field.fieldId, name, BetterMissions.formatFieldTime(self.expectedFieldTime))
+		description = string.format(g_i18n:getText("BM_fieldJob_desc_harvesting"),Utils.getNoNil(self.expectedLiters, 0), g_fillTypeManager:getFillTypeByIndex(self.fillType).title, self.field.fieldId, name, BetterMissions.formatFieldTime(self.expectedFieldTime))
 	}
 end
 
