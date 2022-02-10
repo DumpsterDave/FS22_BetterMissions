@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author>DumpsterDave - defcon1gaming.com</author>
-    <version>0.9.0.8</version>
+    <version>0.9.0.17</version>
     <iconFilename>icon.dds</iconFilename>
     <title>
         <en>Better Missions by DEFCON 1 Gaming.com</en>
     </title>
     <description>
-        <en>Rebalances mission payouts and enhances the mission descriptions.</en>
+        <en><![CDATA[Rebalances mission payouts and enhances the mission descriptions.]]></en>
+        <de><![CDATA[Berechnet die Missionserträge neu, und erweitert die Missionsbeschreibungen.]]></de>
     </description>
     
     <extraSourceFiles>
@@ -19,6 +20,15 @@
     <multiplayer supported="true"/>
     
 </modDesc>
+
+
+
+
+
+
+
+
+
 
 
 
