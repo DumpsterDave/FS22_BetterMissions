@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>poldi71</translationContributors>
+    <texts>
+        <text name="BM_fieldJob_desc_harvesting" text="Ernte %d Liter &apos;%s&apos; auf dem Feld %d, und bringe die Erzeugnisse dann hierhin: %s.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_spraying" text="Entferne das Unkraut auf dem Feld %d, indem du das Feld mit Herbiziden besprühst.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_baling_hay" text="Schneide das Gras auf dem Feld %d. Trockne es danach mit einem Wender und presse es zu Ballen zusammen. Bringe die Ballen dann hierhin: %s.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_baling_silage" text="Schneide das Gras auf dem Feld %d. Presse das Gras zu Ballen und wickle sie ein, um Silageballen zu erhalten. Bringe die Ballen dann hierhin: %s.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_cultivating" text="Bereite das Feld %d durch Grubbern auf die nächste Aussaat vor.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_fertilizing" text="Dünge das Feld %d mit einem beliebigen Dünger (Flüssigdünger, Mineraldünger, Gülle, Mist oder Gärreste).
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_plowing" text="Pflüge das Feld %d um die Erde zu lockern und sie für die nächste Aussaat vorzubereiten.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_sowing" text="Säe auf dem Feld %d &apos;%s&apos; aus.
+        Erwartete Feldzeit: %s" />
+        <text name="BM_fieldJob_desc_weeding" text="Entferne das Unkraut auf Feld %d durch die Verwendung eines Striegels.
+        Erwartete Feldzeit: %s" />
+    </texts>
+</l10n>
