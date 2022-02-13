@@ -51,10 +51,7 @@ function BetterMissions:loadMap()
 		BetterMissions.STARTUP_MODE = 2
 	end
 		
-
-	
 	--Overwrite Description Functions
-	
     HarvestMission.getData = Utils.overwrittenFunction(HarvestMission.getData, BetterMissions.getHarvestMissionData)
 	SprayMission.getData = Utils.overwrittenFunction(SprayMission.getData, BetterMissions.getSprayMissionData)
 	BaleMission.getData = Utils.overwrittenFunction(BaleMission.getData, BetterMissions.getBaleMissionData)
@@ -63,12 +60,14 @@ function BetterMissions:loadMap()
 	PlowMission.getData = Utils.overwrittenFunction(PlowMission.getData, BetterMissions.getPlowMissionData)
 	SowMission.getData = Utils.overwrittenFunction(SowMission.getData, BetterMissions.getSowMissionData)
 	WeedMission.getData = Utils.overwrittenFunction(WeedMission.getData, BetterMissions.getWeedMissionData)
+	g_messageCenter:subscribe(MessageType.MISSION_GENERATED, BetterMissions.updateMissionRewards, BetterMissions)
 	if g_currentMission:getIsServer() then
-		g_messageCenter:subscribe(MessageType.MISSION_GENERATED, BetterMissions.updateMissionRewards, BetterMissions)
 		BetterMissions.DEBUG_MODE = true
 		BetterMissions.STARTUP_MODE = 2
-	end
-	addConsoleCommand("bmToggleDebug", "Toggle debug mode for Better Missions", "consoleToggleDebug", self)
+	end		
+	addConsoleCommand("bmDebugToggle", "Toggle debug mode for Better Missions", "consoleToggleDebug", self)
+	addConsoleCommand("bmDebugDumpTables", "Dumps Mission Tables", "consoleDumpTables", self)
+	addConsoleCommand("bmDebugDumpMissionData", "Dumps Single Mission Data", "consoleDumpMissionData", self)
 	--g_missionManager.MISSION_GENERATION_INTERVAL = 600000
 end
 
@@ -79,6 +78,28 @@ function BetterMissions:consoleToggleDebug()
 		BetterMissions.DEBUG_MODE = false
 	end
 	BetterMissions.info("Debug mode set to " .. tostring(BetterMissions.DEBUG_MODE))
+end
+
+function BetterMissions:consoleDumpTables()
+	--BetterMissions.DumpTables(g_missionManager.missions)
+	DebugUtil.printTableRecursively(g_missionManager.missions)
+end
+
+function BetterMissions:consoleDumpMissionData(fieldId)
+	if fieldId == nil then
+		print("Specify fieldId.  Example:  bmDebugDumpMissionData 10")
+		return
+	end
+	local found = false
+	for _,mission in pairs(g_missionManager.missions) do
+		if mission.field.fieldId == tonumber(fieldId) then
+			found = true
+			DebugUtil.printTableRecursively(mission, ">>", 0, 1)
+		end
+	end
+	if found == false then
+		print("No mission found for field " .. fieldId)
+	end
 end
 
 function BetterMissions.getMissionSteps(mission)
@@ -123,7 +144,6 @@ function BetterMissions.getMissionSteps(mission)
 				if missionSteps.HARVESTER == nil then
 					missionSteps.HARVESTER = step
 				else
-					BetterMissions.debug(type(step.width))
 					if step.width > 0 then
 						missionSteps.HARVESTER.width = math.min(missionSteps.HARVESTER.width, step.width)
 					end
@@ -191,6 +211,7 @@ function BetterMissions.calculateNewRewards(mission)
 	--Calculate haPerHour, expectedFieldTime, newBaseReward, newRewardPerHa
 	local expectedTime = 0
 	local implementHaPerHour
+	BetterMissions.debug("Found " .. #mission.missionSteps .. " steps for field " .. mission.field.fieldId)
 	if mission.type.name == "mow_bale" then
 		for x,v in pairs(mission.missionSteps) do
 			implementHaPerHour = (v.width * v.speed) / 10
@@ -198,8 +219,9 @@ function BetterMissions.calculateNewRewards(mission)
 			expectedTime = expectedTime + (mission.field.fieldArea / implementHaPerHour)
 		end
 	else
-		for _,v in pairs(mission.missionSteps) do
+		for x,v in pairs(mission.missionSteps) do
 			implementHaPerHour = (v.width * v.speed) / 10
+			BetterMissions.debug("[" .. mission.field.fieldId .. "]" .. x .. " IHPH: " .. implementHaPerHour .. ", w: " .. v.width .. ", s:" .. v.speed)
 			expectedTime = mission.field.fieldArea / implementHaPerHour
 		end
 	end
@@ -293,7 +315,7 @@ function BetterMissions:getMissionReward(mission)
 end
 
 function BetterMissions:getWeedMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_weeding"),
@@ -304,7 +326,7 @@ end
 
 function BetterMissions:getHarvestMissionData()
 	BetterMissions.debug("Showing info for field " .. self.field.fieldId)
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
     if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -324,7 +346,7 @@ function BetterMissions:getHarvestMissionData()
 end
 
 function BetterMissions:getSprayMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_spraying"),
@@ -335,7 +357,7 @@ function BetterMissions:getSprayMissionData()
 end
 
 function BetterMissions:getBaleMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -357,7 +379,7 @@ function BetterMissions:getBaleMissionData()
 end
 
 function BetterMissions:getCultivateMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_cultivating"),
@@ -367,7 +389,7 @@ function BetterMissions:getCultivateMissionData()
 end
 
 function BetterMissions:getFertilizeMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_fertilizing"),
@@ -378,7 +400,7 @@ function BetterMissions:getFertilizeMissionData()
 end
 
 function BetterMissions:getPlowMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_plowing"),
@@ -388,7 +410,7 @@ function BetterMissions:getPlowMissionData()
 end
 
 function BetterMissions:getSowMissionData()
-	BetterMissions:getMissionReward(self)
+	--BetterMissions:getMissionReward(self)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_sowing"),
@@ -419,6 +441,7 @@ function BetterMissions.DumpTables(table)
 	BetterMissions.dumpTable(table, 0, file)
 	delete(file)
 end
+
 function BetterMissions.dumpTable(table, depth, file)
 	if depth > 4 then
 		return
