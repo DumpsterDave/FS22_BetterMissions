@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Kynuska</translationContributors>
+    <texts>
+        <text name="BM_fieldJob_desc_harvesting" text="Proveďte sklizeň %d litrů &apos;%s&apos; z pole č. %d a odvez produkt do %s.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_spraying" text="Odstraňte plevel z pole č. %d postřikem pomocí herbicidu.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_baling_hay" text="Posekejte trávu na poli č. %d. Poté trávu usušte na seno a slisujte do balíků. Balíky odvezte do %s.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_baling_silage" text="Posekejte trávu na poli č. %d. Poté trávu slisujte do balíků a zabalte do fólie. Balíky odvezte do %s.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_cultivating" text="Připravte pole č. %d pro osetí další plodinou. Použijte kultivátor.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_fertilizing" text="Pohnojte pole č. %d jakýmkoliv typem hnojiva (postřikem, pevným hnojivem, močůvkou nebo hnojem).
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_plowing" text="Prokypřete pole č. %d orbou a připravte ji pro další zpracování.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_sowing" text="Osejte pole č. %d plodinou &apos;%s&apos;.
+        Očekáváná doba práce: %s" />
+        <text name="BM_fieldJob_desc_weeding" text="Odstraňte krátký plevel z pole č. %d pomocí plečky.
+        Očekáváná doba práce: %s" />
+    </texts>
+</l10n>
