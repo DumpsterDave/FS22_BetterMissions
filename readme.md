@@ -14,6 +14,7 @@ Better Missions changes how mission payouts work.  Instead of a flat $/Ha reward
 Better Missions is currently available in the following languages:
 * English
 * German (Thanks poldi71)
+* Czech
 
 ## Support
 If you find a bug, please submit an issue here on GitHub.  This mod is still in development and I am new to LUA, so there will be bugs.
