@@ -25,20 +25,21 @@ function BMSendExtendedMissionDataEvent:writeStream(streamId)
 end
 
 function BMSendExtendedMissionDataEvent:readStream(streamId, connection)
-    BetterMissions.debug("EVENT: BMSendRead " .. streamId .. ", " .. tostring(connection))
+    --BetterMissions.debug("EVENT: BMSendRead " .. streamId .. ", " .. tostring(connection))
     self.fieldId = streamReadInt32(streamId)
     self.expectedLiters = streamReadFloat32(streamId)
     self.expectedFieldTime = streamReadFloat32(streamId)
-    BetterMissions.debug("Updating mission info for field " .. self.fieldId)
+    BetterMissions.debug("Updating mission info for field " .. self.fieldId .. "(" .. self.expectedLiters .. "," .. self.expectedFieldTime .. ")")
+    local missionFound = false
     for _,mission in pairs(g_missionManager.missions) do
         if mission.field.fieldId == self.fieldId then
-            local stillValid = g_missionManager:canMissionStillRun(mission)
-            if (stillValid) then
-                mission.expectedLiters = self.expectedLiters
-                mission.expectedFieldTime = self.expectedFieldTime
-            end
+            BetterMissions.debug("Found Matching mission for field " .. self.fieldId)
+            mission.expectedLiters = self.expectedLiters
+            mission.expectedFieldTime = self.expectedFieldTime
+            missionFound = true
         end
     end
+    BetterMissions.debug("Field  " .. self.fieldId .. " mission found: " .. tostring(missionFound))
 end
 
 function BMSendExtendedMissionDataEvent:run(connection)

@@ -46,6 +46,7 @@ addModEventListener(BetterMissions)
 
 source(Utils.getFilename("events/BMGetExtendedMissionDataEvent.lua", BetterMissions.BASE_DIRECTORY))
 source(Utils.getFilename("events/BMSendExtendedMissionDataEvent.lua", BetterMissions.BASE_DIRECTORY))
+source(Utils.getFilename("events/BMUserConnectedEvent.lua", BetterMissions.BASE_DIRECTORY))
 
 function BetterMissions:loadMap()
 	BetterMissions.info("Loading Better Missions v" .. BetterMissions.VERSION)
@@ -68,8 +69,6 @@ function BetterMissions:loadMap()
 		BetterMissions.DEBUG_MODE = true
 		BetterMissions.STARTUP_MODE = 2
 		Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, BetterMissions.MissionLoaded)
-	else
-		--Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, BetterMissions.MissionLoaded)
 	end		
 	addConsoleCommand("bmDebugToggle", "Toggle debug mode for Better Missions", "consoleToggleDebug", self)
 	addConsoleCommand("bmDebugDumpTables", "Dumps Mission Tables", "consoleDumpTables", self)
@@ -80,6 +79,12 @@ end
 function BetterMissions:MissionLoaded()
 	--Calculate Mission data for missions that the server has alread generated
 	BetterMissions:updateMissionRewards()
+end
+
+function BetterMissions:init()
+	if g_server == nil then
+		BMUserConnectedEvent.sendEvent()
+	end
 end
 
 function BetterMissions:consoleToggleDebug()
@@ -304,6 +309,10 @@ function BetterMissions:updateMissionRewards()
 				ReimbursementPerHa:     $%d -> $%d
 				AdjustedReward:         $%d -> $%d]], mission.field.fieldId, BetterMissions.formatFieldTime(mission.expectedFieldTime), mission.expectedFieldTime, mission.origRewardPerHa, mission.newRewardPerHa, mission.origReward, mission.newBaseReward, mission.origReimbursementPerHa, mission.newReimbursementPerHa, mission.origDisplayReward, mission.newDisplayReward)
 				BetterMissions.debug(fieldInfo)
+				if g_server ~= nil then
+					local event = BMSendExtendedMissionDataEvent.new(mission.field.fieldId, Utils.getNoNil(mission.expectedLiters, 0), Utils.getNoNil(mission.expectedFieldTime, 0))
+					g_server:broadcastEvent(event, true)
+				end
 			else
 				BetterMissions.debug(string.format("Skipping %s mission for field %02d. It has already been updated.", string.upper(mission.type.name), mission.field.fieldId))
 			end
@@ -371,9 +380,11 @@ function BetterMissions:getExtendedMissionData(fieldId)
 	end
 end
 
-
 function BetterMissions:getWeedMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_weeding"),
@@ -383,7 +394,10 @@ function BetterMissions:getWeedMissionData()
 end
 
 function BetterMissions:getHarvestMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
     if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -403,7 +417,10 @@ function BetterMissions:getHarvestMissionData()
 end
 
 function BetterMissions:getSprayMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_spraying"),
@@ -414,7 +431,10 @@ function BetterMissions:getSprayMissionData()
 end
 
 function BetterMissions:getBaleMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	if self.sellPointId ~= nil then
 		self:tryToResolveSellPoint()
 	end
@@ -436,7 +456,10 @@ function BetterMissions:getBaleMissionData()
 end
 
 function BetterMissions:getCultivateMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_cultivating"),
@@ -446,7 +469,10 @@ function BetterMissions:getCultivateMissionData()
 end
 
 function BetterMissions:getFertilizeMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_fertilizing"),
@@ -457,7 +483,10 @@ function BetterMissions:getFertilizeMissionData()
 end
 
 function BetterMissions:getPlowMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_plowing"),
@@ -467,7 +496,10 @@ function BetterMissions:getPlowMissionData()
 end
 
 function BetterMissions:getSowMissionData()
-	BetterMissions:getExtendedMissionData(self.field.fieldId)
+	if self.expectedFieldTime == nil then
+		g_client:getServerConnection():sendEvent(BMGetExtendedMissionDataEvent.new(self.field.fieldId))
+	end
+	--BetterMissions:getExtendedMissionData(self.field.fieldId)
 	return {
 		location = string.format(g_i18n:getText("fieldJob_number"), self.field.fieldId),
 		jobType = g_i18n:getText("fieldJob_jobType_sowing"),
