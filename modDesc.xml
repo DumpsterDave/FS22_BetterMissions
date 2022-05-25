@@ -5,12 +5,14 @@
     <iconFilename>icon.dds</iconFilename>
     <title>
         <en>Better Missions by DEFCON 1 Gaming.com</en>
-		<cz>Spravedlivější cena misí by DEFCON 1 Gaming.com</cz>
+        <cz>Spravedlivější cena misí by DEFCON 1 Gaming.com</cz>
+        <pl>Ciekawsze kontrakty</pl>
     </title>
     <description>
         <en><![CDATA[Rebalances mission payouts and enhances the mission descriptions.]]></en>
         <de><![CDATA[Berechnet die Missionserträge neu, und erweitert die Missionsbeschreibungen.]]></de>
-		<cz><![CDATA[Znovu vyvažuje výplaty misí a vylepšuje popis misí.]]></cz>
+        <cz><![CDATA[Znovu vyvažuje výplaty misí a vylepšuje popis misí.]]></cz>
+        <pl><![CDATA[Zrównoważa wypłaty za misje i poprawia opis misji.]]></pl>
     </description>
     
     <extraSourceFiles>
@@ -19,49 +21,5 @@
 	
     <l10n filenamePrefix="translations/translation" />
 
-    <multiplayer supported="true"/>
-    
+    <multiplayer supported="true"/>    
 </modDesc>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
