@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Ziuta</translationContributors>
+    <texts>
+        <text name="BM_fieldJob_desc_harvesting" text="Zbierz %d l &apos;%s&apos; z pola %d i dostarcz do %s.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_spraying" text="Usuń chwasty z pola %d stosując oprysk herbicydami.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_baling_hay" text="Skoś trawę na polu %d. Następnie przetrząśnij, aby wyscha i zbeluj ją. Dostarcz bele do %s.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_baling_silage" text="Skoś trawę na polu %d. Następnie zbeluj ją i owiń, aby zrobić kiszonkę. Dostarcz bele do %s.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_cultivating" text="Przygotuj pole %d do zasiewów poprzez kultywację go.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_fertilizing" text="Nawieź pole %d jakimkolwiek typem nawozu (sztuczny płynny, sztuczny stały, gnojowica, lub obornik).
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_plowing" text="Zaoraj pole %d, aby spulchnić glebę i przygotować ją do zasiewów.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_sowing" text="Zasiej pole %d uprawą &apos;%s&apos;.
+        Oczekiwany czas pracy: %s" />
+        <text name="BM_fieldJob_desc_weeding" text="Usuń młode chwasty z pola %d używajać chwastownika.
+        Oczekiwany czas pracy: %s" />
+    </texts>
+</l10n>
